@@ -16,7 +16,7 @@ locals {
     "sendgrid" : "sendgrid-cloud-function-${random_id.random.hex}",
   }
 
-  sendgrid_api_key_secret_version = "${google_secret_manager_secret.sendgrid_api_key.id}/versions/latest"
+  sendgrid_api_key_secret_version = "${google_secret_manager_secret.sendgrid_api_key.id}/versions/${google_secret_manager_secret_version.sendgrid_api_key.version}"
 }
 
 data "google_project" "project" {
@@ -109,9 +109,23 @@ resource "google_secret_manager_secret" "sendgrid_api_key" {
   }
 }
 
-resource "google_secret_manager_secret_version" "tfvars" {
+resource "google_secret_manager_secret_version" "sendgrid_api_key" {
   secret      = google_secret_manager_secret.sendgrid_api_key.id
   secret_data = var.sendgrid_api_key
+}
+
+resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_cloudbuild_sa" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.sendgrid_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.cloudbuild_sa_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_compute_sa" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.sendgrid_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.compute_sa_email}"
 }
 
 # Cloud Build Community Builders
