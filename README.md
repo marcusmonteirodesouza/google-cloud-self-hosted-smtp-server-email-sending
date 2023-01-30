@@ -1,0 +1,1 @@
+# Google Cloud - Email Sending recipes
