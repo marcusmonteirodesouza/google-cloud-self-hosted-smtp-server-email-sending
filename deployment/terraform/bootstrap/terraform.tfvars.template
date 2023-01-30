@@ -1,0 +1,8 @@
+project_id      = "my-project-id"
+folder_id       = ""
+billing_account = ""
+region          = "northamerica-northeast1"
+sourcerepo_name = ""
+branch_name     = "main"
+email_from       = "no-reply@example.com"
+sendgrid_api_key = ""
