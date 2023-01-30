@@ -63,8 +63,14 @@ resource "google_cloudfunctions2_function" "sengrid" {
     timeout_seconds    = 60
 
     environment_variables = {
-      EMAIL_FROM      = var.email_from
-      SENGRID_API_KEY = var.sendgrid_api_key
+      EMAIL_FROM = var.email_from
+    }
+
+    secret_environment_variables {
+      key        = "SENDGRID_API_KEY"
+      secret     = var.sendgrid_api_key_secret_id
+      project_id = data.google_project.project.number
+      version    = "latest"
     }
   }
 

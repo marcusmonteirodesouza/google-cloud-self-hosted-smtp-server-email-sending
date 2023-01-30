@@ -13,10 +13,9 @@ variable "email_from" {
   description = "The email address the system will send emails from."
 }
 
-variable "sendgrid_api_key" {
+variable "sendgrid_api_key_secret_id" {
   type        = string
-  description = "The SendGrid API key"
-  sensitive   = true
+  description = "The SendGrid API key secret id."
 }
 
 variable "sendgrid_cloud_function_source_archive_bucket" {

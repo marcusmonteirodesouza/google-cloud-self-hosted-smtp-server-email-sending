@@ -28,20 +28,11 @@ steps:
       ]
   - id: "terraform-apply"
     name: "gcr.io/$PROJECT_ID/terraform"
-    entrypoint: "bash"
-    args:
-      [
-        "-c",
-        'terraform -chdir=deployment/terraform/environment apply -auto-approve -var="sendgrid_api_key=$$SENDGRID_API_KEY"',
-      ]
+    args: ["-chdir=deployment/terraform/environment", "apply", "-auto-approve"]
     env:
       - "TF_VAR_project_id=${PROJECT_ID}"
       - "TF_VAR_region=${_REGION}"
       - "TF_VAR_email_from=${_EMAIL_FROM}"
+      - "TF_VAR_sendgrid_api_key_secret_id=${_SENDGRID_API_KEY_SECRET_ID}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_bucket=${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_object=sendgrid-cloud-function.zip"
-    secretEnv: ["SENDGRID_API_KEY"]
-availableSecrets:
-  secretManager:
-    - versionName: "${_SENDGRID_API_KEY_SECRET_VERSION}"
-      env: "SENDGRID_API_KEY"

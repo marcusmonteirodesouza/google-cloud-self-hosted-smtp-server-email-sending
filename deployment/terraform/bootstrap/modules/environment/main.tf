@@ -16,8 +16,6 @@ locals {
   cloud_function_buckets = {
     "sendgrid" : "sendgrid-cloud-function-${random_id.random.hex}",
   }
-
-  sendgrid_api_key_secret_version = "${google_secret_manager_secret.sendgrid_api_key.id}/versions/${google_secret_manager_secret_version.sendgrid_api_key.version}"
 }
 
 data "google_project" "project" {
@@ -50,8 +48,9 @@ resource "google_cloudbuild_trigger" "push_to_branch_deployment" {
     _TFSTATE_BUCKET                                = var.tfstate_bucket
     _REGION                                        = var.region
     _EMAIL_FROM                                    = var.email_from
+    _SENDGRID_API_KEY_SECRET_ID                    = google_secret_manager_secret.sendgrid_api_key.secret_id
     _SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET = local.cloud_function_buckets["sendgrid"]
-    _SENDGRID_API_KEY_SECRET_VERSION               = local.sendgrid_api_key_secret_version
+
   }
 }
 
