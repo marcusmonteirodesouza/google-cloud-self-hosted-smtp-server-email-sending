@@ -43,7 +43,7 @@ resource "google_cloudbuild_trigger" "push_to_branch_deployment" {
     branch_name = var.branch_name
   }
 
-  filename = "deployment/google-cloud/cloudbuild/cloudbuild.yaml"
+  filename = "deployment/cloudbuild/cloudbuild.yaml"
 
   substitutions = {
     _TFSTATE_BUCKET                                = var.tfstate_bucket
