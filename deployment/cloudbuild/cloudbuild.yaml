@@ -1,7 +1,12 @@
 steps:
   # SendGrid Cloud Function
-  - id: 'sendgrid-cloud-function-upload'
-    name: 'gcr.io/cloud-builders/gcloud'
+  - id: sendgrid-cloud-function-zip
+    name: gcr.io/$PROJECT_ID/zip
+    args: ["-r", "sendgrid-cloud-function.zip", "."]
+    dir: cloud-functions/sendgrid
+    waitFor: ["-"]
+  - id: "sendgrid-cloud-function-upload"
+    name: "gcr.io/cloud-builders/gcloud"
     args:
       [
         "storage",
@@ -10,28 +15,24 @@ steps:
         "gs://${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/sendgrid-cloud-function.zip",
         "--quiet",
       ]
-    dir: 'cloud-functions/sendgrid'
+    dir: "cloud-functions/sendgrid"
     waitFor: ["sendgrid-cloud-function-zip"]
   # Deployment
-  - id: 'terraform-init'
-    name: 'gcr.io/$PROJECT_ID/terraform'
+  - id: "terraform-init"
+    name: "gcr.io/$PROJECT_ID/terraform"
     args:
       [
-        "-chdir=deployment/google-cloud/terraform/environment",
+        "-chdir=deployment/terraform/environment",
         "init",
         "-backend-config=bucket=${_TFSTATE_BUCKET}",
       ]
-  - id: 'terraform-apply'
-    name: 'gcr.io/$PROJECT_ID/terraform'
-    entrypoint: 'bash'
+  - id: "terraform-apply"
+    name: "gcr.io/$PROJECT_ID/terraform"
+    entrypoint: "bash"
     args:
       [
         "-c",
-        "terraform",
-        "-chdir=deployment/google-cloud/terraform/environment",
-        "apply",
-        "-auto-approve",
-        '-var="sendgrid_api_key=${SENDGRID_API_KEY}"',
+        'terraform -chdir=deployment/terraform/environment apply -auto-approve -var="sendgrid_api_key=$$SENDGRID_API_KEY"',
       ]
     env:
       - "TF_VAR_project_id=${PROJECT_ID}"
@@ -39,8 +40,8 @@ steps:
       - "TF_VAR_email_from=${_EMAIL_FROM}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_bucket=${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_object=sendgrid-cloud-function.zip"
-    secretEnv: ['SENDGRID_API_KEY']
+    secretEnv: ["SENDGRID_API_KEY"]
 availableSecrets:
   secretManager:
-    - versionName: '${_SENDGRID_API_KEY_SECRET_VERSION}'
-      env: 'SENDGRID_API_KEY'
+    - versionName: "${_SENDGRID_API_KEY_SECRET_VERSION}"
+      env: "SENDGRID_API_KEY"
