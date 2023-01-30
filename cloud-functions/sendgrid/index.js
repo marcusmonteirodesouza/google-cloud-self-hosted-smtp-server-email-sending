@@ -4,16 +4,24 @@ const Joi = require('joi');
 const { config } = require('./config');
 
 functions.cloudEvent('sendEmail', async (cloudEvent) => {
+  console.log('received cloudEvent', cloudEvent);
+
   const messageData = validateMessageData(cloudEvent);
+
+  console.log('messageData', messageData);
 
   sgMail.setApiKey(config.sendgridApiKey);
 
-  await sgMail.send({
+  const msg = {
     to: messageData.to,
     from: config.emailFrom,
     subject: messageData.subject,
     html: messageData.body,
-  });
+  };
+
+  await sgMail.send(msg);
+
+  console.log('email sent!', msg);
 });
 
 function validateMessageData(cloudEvent) {
