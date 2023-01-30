@@ -1,9 +1,9 @@
 steps:
   # SendGrid Cloud Function
-  - id: sendgrid-cloud-function-zip
-    name: gcr.io/$PROJECT_ID/zip
+  - id: "sendgrid-cloud-function-zip"
+    name: "gcr.io/$PROJECT_ID/zip"
     args: ["-r", "sendgrid-cloud-function.zip", "."]
-    dir: cloud-functions/sendgrid
+    dir: "cloud-functions/sendgrid"
     waitFor: ["-"]
   - id: "sendgrid-cloud-function-upload"
     name: "gcr.io/cloud-builders/gcloud"
