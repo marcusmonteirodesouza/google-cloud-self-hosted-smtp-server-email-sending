@@ -50,6 +50,6 @@ function validateMessageData(cloudEvent) {
   return {
     to: validatedMessageData.to,
     subject: validatedMessageData.subject,
-    body: validatedMessageData.html,
+    body: validatedMessageData.body,
   };
 }
