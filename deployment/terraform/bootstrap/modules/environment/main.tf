@@ -5,6 +5,7 @@ locals {
     "roles/cloudfunctions.admin",
     "roles/eventarc.admin",
     "roles/iam.serviceAccountUser",
+    "roles/pubsub.admin",
   ]
 
   compute_sa_email = "${data.google_project.project.number}-compute@developer.gserviceaccount.com"
@@ -48,6 +49,7 @@ resource "google_cloudbuild_trigger" "push_to_branch_deployment" {
   substitutions = {
     _TFSTATE_BUCKET                                = var.tfstate_bucket
     _REGION                                        = var.region
+    _EMAIL_FROM                                    = var.email_from
     _SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET = local.cloud_function_buckets["sendgrid"]
     _SENDGRID_API_KEY_SECRET_VERSION               = local.sendgrid_api_key_secret_version
   }
