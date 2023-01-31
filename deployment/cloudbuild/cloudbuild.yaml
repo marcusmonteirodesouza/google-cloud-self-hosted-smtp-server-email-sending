@@ -1,40 +1,40 @@
 steps:
-  # SendGrid Cloud Function
-  - id: "sendgrid-cloud-function-zip"
-    name: "gcr.io/$PROJECT_ID/zip"
-    args: ["-r", "sendgrid-cloud-function.zip", "."]
-    dir: "cloud-functions/sendgrid"
-    waitFor: ["-"]
-  - id: "sendgrid-cloud-function-upload"
-    name: "gcr.io/cloud-builders/gcloud"
-    args:
-      [
-        "storage",
-        "cp",
-        "sendgrid-cloud-function.zip",
-        "gs://${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/sendgrid-cloud-function.zip",
-        "--quiet",
-      ]
-    dir: "cloud-functions/sendgrid"
-    waitFor: ["sendgrid-cloud-function-zip"]
-  # SMTP Cloud Function
-  - id: "smtp-cloud-function-zip"
-    name: "gcr.io/$PROJECT_ID/zip"
-    args: ["-r", "smtp-cloud-function.zip", "."]
-    dir: "cloud-functions/smtp"
-    waitFor: ["-"]
-  - id: "smtp-cloud-function-upload"
-    name: "gcr.io/cloud-builders/gcloud"
-    args:
-      [
-        "storage",
-        "cp",
-        "smtp-cloud-function.zip",
-        "gs://${_SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/smtp-cloud-function.zip",
-        "--quiet",
-      ]
-    dir: "cloud-functions/smtp"
-    waitFor: ["smtp-cloud-function-zip"]
+  # # SendGrid Cloud Function
+  # - id: "sendgrid-cloud-function-zip"
+  #   name: "gcr.io/$PROJECT_ID/zip"
+  #   args: ["-r", "sendgrid-cloud-function.zip", "."]
+  #   dir: "cloud-functions/sendgrid"
+  #   waitFor: ["-"]
+  # - id: "sendgrid-cloud-function-upload"
+  #   name: "gcr.io/cloud-builders/gcloud"
+  #   args:
+  #     [
+  #       "storage",
+  #       "cp",
+  #       "sendgrid-cloud-function.zip",
+  #       "gs://${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/sendgrid-cloud-function.zip",
+  #       "--quiet",
+  #     ]
+  #   dir: "cloud-functions/sendgrid"
+  #   waitFor: ["sendgrid-cloud-function-zip"]
+  # # SMTP Cloud Function
+  # - id: "smtp-cloud-function-zip"
+  #   name: "gcr.io/$PROJECT_ID/zip"
+  #   args: ["-r", "smtp-cloud-function.zip", "."]
+  #   dir: "cloud-functions/smtp"
+  #   waitFor: ["-"]
+  # - id: "smtp-cloud-function-upload"
+  #   name: "gcr.io/cloud-builders/gcloud"
+  #   args:
+  #     [
+  #       "storage",
+  #       "cp",
+  #       "smtp-cloud-function.zip",
+  #       "gs://${_SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/smtp-cloud-function.zip",
+  #       "--quiet",
+  #     ]
+  #   dir: "cloud-functions/smtp"
+  #   waitFor: ["smtp-cloud-function-zip"]
   # Deployment
   - id: "terraform-init"
     name: "gcr.io/$PROJECT_ID/terraform"
