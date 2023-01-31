@@ -3,6 +3,8 @@ locals {
 
   cloudbuild_sa_roles = [
     "roles/cloudfunctions.admin",
+    "roles/compute.instanceAdmin",
+    "roles/compute.networkAdmin",
     "roles/eventarc.admin",
     "roles/iam.serviceAccountUser",
     "roles/pubsub.admin",
@@ -159,7 +161,7 @@ resource "google_secret_manager_secret_version" "email_password" {
 resource "google_secret_manager_secret_iam_member" "email_password_cloudbuild_sa" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.email_password.secret_id
-  role      = "roles/secretmanager.secretAccessor"
+  role      = "roles/secretmanager.admin"
   member    = "serviceAccount:${local.cloudbuild_sa_email}"
 }
 

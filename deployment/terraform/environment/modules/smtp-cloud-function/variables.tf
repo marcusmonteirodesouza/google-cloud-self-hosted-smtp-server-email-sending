@@ -39,7 +39,12 @@ variable "email_server_ip_address" {
   description = "The IP address to be assigned to the Email Server."
 }
 
+variable "public_network_id" {
+  type        = string
+  description = "The ID of public network in which resources will be created."
+}
+
 variable "public_network_name" {
   type        = string
-  description = "The public network name in which resources will be created."
+  description = "The name of public network in which resources will be created."
 }

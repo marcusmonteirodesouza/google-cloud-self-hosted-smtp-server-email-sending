@@ -6,10 +6,6 @@ locals {
 data "google_compute_zones" "available" {
 }
 
-data "google_compute_network" "public_network" {
-  name = var.public_network_name
-}
-
 data "google_secret_manager_secret_version" "email_password" {
   secret = var.email_password_secret_id
 }
@@ -17,7 +13,7 @@ data "google_secret_manager_secret_version" "email_password" {
 # See https://mailinabox.email/guide.html
 resource "google_compute_firewall" "mailinabox_email_server_ingress" {
   name        = "mailinabox-email-server-ingress"
-  network     = data.google_compute_network.public_network.id
+  network     = var.public_network_id
   description = "Ingress firewall rule targeting Mail-in-a-Box email server instances"
 
   allow {
@@ -53,7 +49,7 @@ resource "google_compute_firewall" "mailinabox_email_server_ingress" {
 
 resource "google_compute_firewall" "mailinabox_email_server_egress" {
   name        = "mailinabox-email-server-egress"
-  network     = data.google_compute_network.public_network.id
+  network     = var.public_network_id
   description = "Egress firewall rule targeting Mail-in-a-Box email server instances"
   direction   = "EGRESS"
 
@@ -75,7 +71,7 @@ resource "google_compute_firewall" "mailinabox_email_server_egress" {
 
 resource "google_compute_firewall" "mailinabox_email_server_allow_iap_ssh" {
   name        = "mailinabox-email-server-allow-iap-ssh"
-  network     = data.google_compute_network.public_network.id
+  network     = var.public_network_id
   description = "Allow Identity-Aware Proxy ssh targeting Mail-in-a-Box email server instances"
 
   allow {

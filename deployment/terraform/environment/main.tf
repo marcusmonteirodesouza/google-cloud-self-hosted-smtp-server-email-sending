@@ -30,12 +30,13 @@ resource "google_compute_address" "email_server" {
 module "smtp_cloud_function" {
   source                    = "./modules/smtp-cloud-function"
   region                    = var.region
-  source_archive_bucket     = var.sendgrid_cloud_function_source_archive_bucket
-  source_archive_object     = var.sendgrid_cloud_function_source_archive_object
+  source_archive_bucket     = var.smtp_cloud_function_source_archive_bucket
+  source_archive_object     = var.smtp_cloud_function_source_archive_object
   email_from                = var.email_from
   email_server_hostname     = var.email_server_hostname
   email_password_secret_id  = var.email_password_secret_id
   email_server_machine_type = "e2-standard-2"
   email_server_ip_address   = google_compute_address.email_server.address
-  public_network_name       = module.networks.public_network_name
+  public_network_id         = module.networks.public_network.id
+  public_network_name       = module.networks.public_network.name
 }
