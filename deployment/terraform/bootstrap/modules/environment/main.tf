@@ -15,6 +15,7 @@ locals {
 
   cloud_function_buckets = {
     "sendgrid" : "sendgrid-cloud-function-${random_id.random.hex}",
+    "smtp" : "smtp-cloud-function-${random_id.random.hex}",
   }
 }
 
@@ -50,6 +51,9 @@ resource "google_cloudbuild_trigger" "push_to_branch_deployment" {
     _EMAIL_FROM                                    = var.email_from
     _SENDGRID_API_KEY_SECRET_ID                    = google_secret_manager_secret.sendgrid_api_key.secret_id
     _SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET = local.cloud_function_buckets["sendgrid"]
+    _EMAIL_SERVER_HOSTNAME                         = var.email_server_hostname
+    _EMAIL_PASSWORD_SECRET_ID                      = google_secret_manager_secret.email_password.secret_id
+    _SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET     = local.cloud_function_buckets["smtp"]
 
   }
 }
@@ -125,6 +129,43 @@ resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_cloudbuild_
 resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_compute_sa" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.sendgrid_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.compute_sa_email}"
+}
+
+# SMTP 
+resource "random_password" "email_password" {
+  length = 16
+}
+
+resource "google_secret_manager_secret" "email_password" {
+  project   = var.project_id
+  secret_id = "email-password"
+
+  replication {
+    user_managed {
+      replicas {
+        location = var.region
+      }
+    }
+  }
+}
+
+resource "google_secret_manager_secret_version" "email_password" {
+  secret      = google_secret_manager_secret.email_password.id
+  secret_data = random_password.email_password.result
+}
+
+resource "google_secret_manager_secret_iam_member" "email_password_cloudbuild_sa" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.email_password.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.cloudbuild_sa_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "email_password_compute_sa" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.email_password.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${local.compute_sa_email}"
 }

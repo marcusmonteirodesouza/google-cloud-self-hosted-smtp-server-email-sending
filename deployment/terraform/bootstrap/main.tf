@@ -28,11 +28,12 @@ resource "google_secret_manager_secret_version" "tfvars" {
 module "environment" {
   source = "./modules/environment"
 
-  project_id       = module.project.project_id
-  region           = var.region
-  sourcerepo_name  = var.sourcerepo_name
-  branch_name      = var.branch_name
-  tfstate_bucket   = module.project.tfstate_bucket
-  email_from       = var.email_from
-  sendgrid_api_key = var.sendgrid_api_key
+  project_id            = module.project.project_id
+  region                = var.region
+  sourcerepo_name       = var.sourcerepo_name
+  branch_name           = var.branch_name
+  tfstate_bucket        = module.project.tfstate_bucket
+  email_from            = var.email_from
+  sendgrid_api_key      = var.sendgrid_api_key
+  email_server_hostname = var.email_server_hostname
 }

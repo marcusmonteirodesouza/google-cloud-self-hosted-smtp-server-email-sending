@@ -17,6 +17,24 @@ steps:
       ]
     dir: "cloud-functions/sendgrid"
     waitFor: ["sendgrid-cloud-function-zip"]
+  # SMTP Cloud Function
+  - id: "smtp-cloud-function-zip"
+    name: "gcr.io/$PROJECT_ID/zip"
+    args: ["-r", "smtp-cloud-function.zip", "."]
+    dir: "cloud-functions/smtp"
+    waitFor: ["-"]
+  - id: "smtp-cloud-function-upload"
+    name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "storage",
+        "cp",
+        "smtp-cloud-function.zip",
+        "gs://${_SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/smtp-cloud-function.zip",
+        "--quiet",
+      ]
+    dir: "cloud-functions/smtp"
+    waitFor: ["smtp-cloud-function-zip"]
   # Deployment
   - id: "terraform-init"
     name: "gcr.io/$PROJECT_ID/terraform"
@@ -36,3 +54,7 @@ steps:
       - "TF_VAR_sendgrid_api_key_secret_id=${_SENDGRID_API_KEY_SECRET_ID}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_bucket=${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"
       - "TF_VAR_sendgrid_cloud_function_source_archive_object=sendgrid-cloud-function.zip"
+      - "TF_VAR_email_server_hostname=${_EMAIL_SERVER_HOSTNAME}"
+      - "TF_VAR_email_password_secret_id=${_EMAIL_PASSWORD_SECRET_ID}"
+      - "TF_VAR_smtp_cloud_function_source_archive_bucket=${_SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"
+      - "TF_VAR_smtp_cloud_function_source_archive_object=smtp-cloud-function.zip"
