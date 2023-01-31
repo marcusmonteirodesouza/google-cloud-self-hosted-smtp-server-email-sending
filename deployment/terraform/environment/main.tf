@@ -27,7 +27,7 @@ resource "google_compute_address" "email_server" {
   name = "email-server-address"
 }
 
-module "sendgrid_cloud_function" {
+module "smtp_cloud_function" {
   source                    = "./modules/smtp-cloud-function"
   region                    = var.region
   source_archive_bucket     = var.sendgrid_cloud_function_source_archive_bucket
