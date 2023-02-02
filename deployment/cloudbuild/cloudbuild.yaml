@@ -1,22 +1,4 @@
 steps:
-  # # SendGrid Cloud Function
-  # - id: "sendgrid-cloud-function-zip"
-  #   name: "gcr.io/$PROJECT_ID/zip"
-  #   args: ["-r", "sendgrid-cloud-function.zip", "."]
-  #   dir: "cloud-functions/sendgrid"
-  #   waitFor: ["-"]
-  # - id: "sendgrid-cloud-function-upload"
-  #   name: "gcr.io/cloud-builders/gcloud"
-  #   args:
-  #     [
-  #       "storage",
-  #       "cp",
-  #       "sendgrid-cloud-function.zip",
-  #       "gs://${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}/sendgrid-cloud-function.zip",
-  #       "--quiet",
-  #     ]
-  #   dir: "cloud-functions/sendgrid"
-  #   waitFor: ["sendgrid-cloud-function-zip"]
   # # SMTP Cloud Function
   # - id: "smtp-cloud-function-zip"
   #   name: "gcr.io/$PROJECT_ID/zip"
@@ -51,9 +33,6 @@ steps:
       - "TF_VAR_project_id=${PROJECT_ID}"
       - "TF_VAR_region=${_REGION}"
       - "TF_VAR_email_from=${_EMAIL_FROM}"
-      - "TF_VAR_sendgrid_api_key_secret_id=${_SENDGRID_API_KEY_SECRET_ID}"
-      - "TF_VAR_sendgrid_cloud_function_source_archive_bucket=${_SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"
-      - "TF_VAR_sendgrid_cloud_function_source_archive_object=sendgrid-cloud-function.zip"
       - "TF_VAR_email_server_hostname=${_EMAIL_SERVER_HOSTNAME}"
       - "TF_VAR_email_password_secret_id=${_EMAIL_PASSWORD_SECRET_ID}"
       - "TF_VAR_smtp_cloud_function_source_archive_bucket=${_SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET}"

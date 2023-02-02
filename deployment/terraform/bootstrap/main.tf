@@ -34,6 +34,5 @@ module "environment" {
   branch_name           = var.branch_name
   tfstate_bucket        = module.project.tfstate_bucket
   email_from            = var.email_from
-  sendgrid_api_key      = var.sendgrid_api_key
   email_server_hostname = var.email_server_hostname
 }

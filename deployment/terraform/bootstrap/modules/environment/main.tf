@@ -3,9 +3,9 @@ locals {
 
   cloudbuild_sa_roles = [
     "roles/cloudfunctions.admin",
-    "roles/compute.instanceAdmin",
-    "roles/compute.networkAdmin",
+    "roles/compute.admin",
     "roles/eventarc.admin",
+    "roles/iam.serviceAccountCreator",
     "roles/iam.serviceAccountUser",
     "roles/pubsub.admin",
   ]
@@ -51,8 +51,6 @@ resource "google_cloudbuild_trigger" "push_to_branch_deployment" {
     _TFSTATE_BUCKET                                = var.tfstate_bucket
     _REGION                                        = var.region
     _EMAIL_FROM                                    = var.email_from
-    _SENDGRID_API_KEY_SECRET_ID                    = google_secret_manager_secret.sendgrid_api_key.secret_id
-    _SENDGRID_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET = local.cloud_function_buckets["sendgrid"]
     _EMAIL_SERVER_HOSTNAME                         = var.email_server_hostname
     _EMAIL_PASSWORD_SECRET_ID                      = google_secret_manager_secret.email_password.secret_id
     _SMTP_CLOUD_FUNCTION_SOURCE_ARCHIVE_BUCKET     = local.cloud_function_buckets["smtp"]
@@ -100,39 +98,6 @@ resource "google_storage_bucket_iam_member" "cloudbuild_sa_cloud_functions_stora
   depends_on = [
     google_storage_bucket.cloud_functions
   ]
-}
-
-# SendGrid 
-resource "google_secret_manager_secret" "sendgrid_api_key" {
-  project   = var.project_id
-  secret_id = "sendgrid-api-key"
-
-  replication {
-    user_managed {
-      replicas {
-        location = var.region
-      }
-    }
-  }
-}
-
-resource "google_secret_manager_secret_version" "sendgrid_api_key" {
-  secret      = google_secret_manager_secret.sendgrid_api_key.id
-  secret_data = var.sendgrid_api_key
-}
-
-resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_cloudbuild_sa" {
-  project   = var.project_id
-  secret_id = google_secret_manager_secret.sendgrid_api_key.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${local.cloudbuild_sa_email}"
-}
-
-resource "google_secret_manager_secret_iam_member" "sendgrid_api_key_compute_sa" {
-  project   = var.project_id
-  secret_id = google_secret_manager_secret.sendgrid_api_key.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${local.compute_sa_email}"
 }
 
 # SMTP 
