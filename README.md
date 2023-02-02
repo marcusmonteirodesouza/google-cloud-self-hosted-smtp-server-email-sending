@@ -1,4 +1,6 @@
-# Google Cloud - Email Sending recipes
+# Google Cloud - Self-Hosted Email Sending
+
+This is an example of how to send emails in [Google Cloud](https://cloud.google.com/) using a self-hosted email server running [Mail-in-a-Box](https://mailinabox.email/).
 
 ## Deployment
 
@@ -7,6 +9,7 @@ The system is deployed using [`terraform`](https://www.terraform.io/), running i
 ### Pre-requisites
 
 1. Create a Google Cloud [Organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
+1. Contact Google to allow your organization to make outbound connections to TCP port `25`. Google [blocks it by default](https://cloud.google.com/vpc/docs/firewalls#blockedtraffic).
 1. Install [`terraform`](https://developer.hashicorp.com/terraform/downloads).
 1. Install the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install).
 1. Have a [domain name](https://en.wikipedia.org/wiki/Domain_name) and access to the domain's DNS. You will need to add a [TXT record](https://apps.google.com/supportwidget/articlehome?hl=en&article_url=https%3A%2F%2Fsupport.google.com%2Fa%2Fanswer%2F2716800%3Fhl%3Den&assistant_id=generic-unu&product_context=2716800&product_name=UnuFlow&trigger_context=a) to prove to Google that you own the `email_server_hostname`.
@@ -35,3 +38,4 @@ This is a Cloud Build [build](https://cloud.google.com/build/docs/overview#how_b
    - Push a commit to your Cloud Source Repository or to your Github fork.
    - Go to your project's [Cloud Build Dashboard](https://console.cloud.google.com/cloud-build/triggers) and manually run the `push-to-branch-deployment` [trigger](https://cloud.google.com/build/docs/triggers).
 1. The first time the deployment build runs it will fail, unless you have already verified the `email_server_hostname`'s with Google before. You will see the domain verification instructions in the build error. Verify your domain, then add the [Cloud Build Service Account](https://cloud.google.com/build/docs/cloud-build-service-account) as an owner, and then run the build again.
+1. Follow the [Mail-in-a-Box setup guide](https://mailinabox.email/guide.html) to maximize the deliverability of your emails.
