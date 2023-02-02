@@ -2,6 +2,32 @@
 
 This is an example of how to send emails in [Google Cloud](https://cloud.google.com/) using a self-hosted email server running [Mail-in-a-Box](https://mailinabox.email/).
 
+## System Overview
+
+## Architecture Diagram
+
+![system architecture diagram](./images/system-architecture-diagram.png)
+
+## Components
+
+### [smtp Cloud Function](./cloud-functions/smtp)
+
+[Pub/Sub triggered Cloud Function](https://cloud.google.com/functions/docs/calling/pubsub) that sends emails using by connecting to a SMTP server.
+
+It expects a message with the following structure:
+
+```json
+{
+  "to": "recipient@example.com",
+  "subject": "My email subject",
+  "body": "<h1>The email body can be html</h1>"
+}
+```
+
+### Email Server
+
+A [virtual machine instance](https://cloud.google.com/compute/docs/instances) running [Mail-in-a-Box](https://mailinabox.email/).
+
 ## Deployment
 
 The system is deployed using [`terraform`](https://www.terraform.io/), running in [Cloud Build](https://cloud.google.com/build/docs/overview).
