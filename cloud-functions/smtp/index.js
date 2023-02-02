@@ -1,5 +1,5 @@
 const functions = require('@google-cloud/functions-framework');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 const Joi = require('joi');
 const { config } = require('./config');
 
@@ -10,18 +10,26 @@ functions.cloudEvent('sendEmail', async (cloudEvent) => {
 
   console.log('messageData', messageData);
 
-  sgMail.setApiKey(config.sendgridApiKey);
+  const transporter = nodemailer.createTransport({
+    host: config.emailServerHost,
+    port: 465,
+    secure: true,
+    auth: {
+      user: config.emailFrom,
+      pass: config.emailPassword,
+    },
+  });
 
-  const msg = {
-    to: messageData.to,
+  const emailOptions = {
     from: config.emailFrom,
+    to: messageData.to,
     subject: messageData.subject,
     html: messageData.body,
   };
 
-  await sgMail.send(msg);
+  const sentMessageInfo = await transporter.sendMail(emailOptions);
 
-  console.log('email sent!', msg);
+  console.log('email sent!', sentMessageInfo);
 });
 
 function validateMessageData(cloudEvent) {

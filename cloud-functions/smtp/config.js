@@ -3,7 +3,8 @@ const Joi = require('joi');
 const envVarsSchema = Joi.object()
   .keys({
     EMAIL_FROM: Joi.string().email().required(),
-    SENDGRID_API_KEY: Joi.string().required(),
+    EMAIL_PASSWORD: Joi.string().required(),
+    EMAIL_SERVER_HOST: Joi.string().required(),
   })
   .unknown(true);
 
@@ -15,7 +16,8 @@ if (error) {
 
 const config = {
   emailFrom: envVars.EMAIL_FROM,
-  sendgridApiKey: envVars.SENDGRID_API_KEY,
+  emailPassword: envVars.EMAIL_PASSWORD,
+  emailServerHost: envVars.EMAIL_SERVER_HOST,
 };
 
 module.exports = { config };

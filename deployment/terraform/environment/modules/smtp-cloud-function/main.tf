@@ -29,19 +29,19 @@ resource "null_resource" "copy_source_archive_object" {
   }
 }
 
-resource "google_pubsub_topic" "sendgrid" {
-  name = "sendgrid"
+resource "google_pubsub_topic" "smtp" {
+  name = "smtp"
 }
 
 resource "google_cloudfunctions2_function" "sengrid" {
   provider    = google-beta
-  name        = "sendgrid"
+  name        = "smtp"
   location    = var.region
-  description = "Sends emails using SendGrid"
+  description = "Sends emails by connecting to an SMTP server"
 
   event_trigger {
     event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
-    pubsub_topic   = google_pubsub_topic.sendgrid.id
+    pubsub_topic   = google_pubsub_topic.smtp.id
     retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
     trigger_region = var.region
   }
@@ -63,12 +63,13 @@ resource "google_cloudfunctions2_function" "sengrid" {
     timeout_seconds    = 60
 
     environment_variables = {
-      EMAIL_FROM = var.email_from
+      EMAIL_FROM        = var.email_from
+      EMAIL_SERVER_HOST = google_compute_instance.mailinabox_email_server.network_interface.0.access_config.0.nat_ip
     }
 
     secret_environment_variables {
-      key        = "SENDGRID_API_KEY"
-      secret     = var.sendgrid_api_key_secret_id
+      key        = "EMAIL_PASSWORD"
+      secret     = var.email_password_secret_id
       project_id = data.google_project.project.number
       version    = "latest"
     }
